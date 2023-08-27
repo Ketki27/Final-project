@@ -1,0 +1,81 @@
+---
+title: "Final_Q"
+author: "Ketki"
+format: html
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this 
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+library(tidyverse)
+library(gtsummary)
+library(knitr)
+
+here::here("Data", "covid_testing.rda")
+```
+
+```{r}
+#| label: tbl-one
+#| tbl-cap: "Descriptive statistics"
+#| output-location: slide
+#| echo: false
+library(gtsummary)
+load(file = 'covid_testing.rda')
+table1<- tbl_summary(
+  covid_testing,
+  by = gender,
+  include = c(age, result, pan_day, drive_thru_ind, ct_result, payor_group, patient_class, orderset, col_rec_tat, rec_ver_tat))
+stats <- list(n = nrow(covid_testing),
+              mean_age = mean(covid_testing$age, na.rm = TRUE))
+table1
+```
+
+```{r}
+#| echo: false
+regression <- tbl_uvregression (covid_testing,
+	y = drive_thru_ind,
+	include = c(age, orderset, col_rec_tat, rec_ver_tat
+							),
+	method = lm)
+```
+
+```{r}
+#| echo: false
+inline_text(table1, variable = "age", column ="female")
+inline_text(table1, variable = "result", column ="female", level = "positive")
+```
+
+```{r}
+#| label: fig-hist
+#| fig-cap: "This is a histogram"
+#| echo: false
+hist(covid_testing$age)
+```
+@fig-hist contains a histogram and @tbl-one a table.
+
+@tbl-one contains descriptive statistics.
+The average age (`r inline_text(table1, variable = "age", column ="female")`) for females.
+the mean age is (`r round(stats$mean_age, 2)`)
+The source of the dataset is: https://higgi13425.github.io/medicaldata/#list-of-datasets
