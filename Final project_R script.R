@@ -52,4 +52,19 @@ tidy(logistic_model, conf.int = TRUE, exponentiate = TRUE) |>
 	facet_grid(cols = vars(variable), scales = "free", space = "free") +
 	scale_y_log10()
 
+# function: % of collection to receipt turn around time out of total TAT from collection to verification
+col_rec_percent <- function(x, y) {
+	value = (x/(x + y))*100
+	return(value)
+}
 
+col_rec_percent(covid_testing$col_rec_tat, covid_testing$rec_ver_tat)
+
+
+
+# renv installation
+install.packages("renv")
+renv::init()
+
+
+renv::snapshot()
